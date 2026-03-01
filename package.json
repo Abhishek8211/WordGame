@@ -1,0 +1,12 @@
+{
+  "name": "wordgrid",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "dev": "start cmd /k \"cd server && npm run dev\" && start cmd /k \"cd client && npm run dev\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev"
+  },
+  "description": "WordGrid — Full Stack Multiplayer Word Game"
+}
