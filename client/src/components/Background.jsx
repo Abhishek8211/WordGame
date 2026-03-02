@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 /**
  * Anti-gravity background:
@@ -6,39 +6,39 @@ import React, { useEffect, useRef } from 'react';
  */
 export default function Background() {
   const canvasRef = useRef(null);
-  const mouseRef  = useRef({ x: -9999, y: -9999 });
-  const ticksRef  = useRef([]);
+  const mouseRef = useRef({ x: -9999, y: -9999 });
+  const ticksRef = useRef([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx    = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
-    const TICK_SPACING  = 48;
-    const REPEL_RADIUS  = 130;
+    const TICK_SPACING = 48;
+    const REPEL_RADIUS = 130;
     const REPEL_STRENGTH = 0.28;
-    const RETURN_SPEED   = 0.06;
-    const TICK_SIZE      = 6;
-    const TICK_OPACITY   = 0.18;
-    const TICK_COLOR_DARK  = `rgba(139,92,246,${TICK_OPACITY})`;
+    const RETURN_SPEED = 0.06;
+    const TICK_SIZE = 6;
+    const TICK_OPACITY = 0.18;
+    const TICK_COLOR_DARK = `rgba(139,92,246,${TICK_OPACITY})`;
     const TICK_COLOR_LIGHT = `rgba(109,40,217,${TICK_OPACITY})`;
 
     function resize() {
-      canvas.width  = window.innerWidth;
+      canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       buildTicks();
     }
 
     function buildTicks() {
       ticksRef.current = [];
-      const cols = Math.ceil(canvas.width  / TICK_SPACING) + 1;
+      const cols = Math.ceil(canvas.width / TICK_SPACING) + 1;
       const rows = Math.ceil(canvas.height / TICK_SPACING) + 1;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           ticksRef.current.push({
-            ox: c * TICK_SPACING,       // origin x
-            oy: r * TICK_SPACING,       // origin y
-            x:  c * TICK_SPACING,       // current x
-            y:  r * TICK_SPACING,       // current y
+            ox: c * TICK_SPACING, // origin x
+            oy: r * TICK_SPACING, // origin y
+            x: c * TICK_SPACING, // current x
+            y: r * TICK_SPACING, // current y
             vx: 0,
             vy: 0,
           });
@@ -59,9 +59,9 @@ export default function Background() {
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const isDark = document.documentElement.classList.contains('dark');
+      const isDark = document.documentElement.classList.contains("dark");
       ctx.strokeStyle = isDark ? TICK_COLOR_DARK : TICK_COLOR_LIGHT;
-      ctx.lineWidth   = 1;
+      ctx.lineWidth = 1;
 
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
@@ -98,15 +98,15 @@ export default function Background() {
       mouseRef.current = { x: e.clientX, y: e.clientY };
     }
 
-    window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", onMouseMove);
 
     resize();
     animate();
 
     return () => {
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouseMove);
       cancelAnimationFrame(animId);
     };
   }, []);
