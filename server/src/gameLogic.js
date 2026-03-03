@@ -5,7 +5,7 @@
 
 /** Create an N×N grid of empty strings */
 function initGrid(size) {
-  return Array.from({ length: size }, () => Array(size).fill(''));
+  return Array.from({ length: size }, () => Array(size).fill(""));
 }
 
 /**
@@ -14,22 +14,22 @@ function initGrid(size) {
  */
 function checkWordsFormed(grid, row, col, size) {
   const directions = [
-    { dr: 0,  dc: 1,  name: 'horizontal' },  // →
-    { dr: 0,  dc: -1, name: 'horizontal' },  // ←
-    { dr: 1,  dc: 0,  name: 'vertical' },    // ↓
-    { dr: -1, dc: 0,  name: 'vertical' },    // ↑
-    { dr: 1,  dc: 1,  name: 'diagonal' },    // ↘
-    { dr: -1, dc: -1, name: 'diagonal' },    // ↖
-    { dr: 1,  dc: -1, name: 'diagonal' },    // ↙
-    { dr: -1, dc: 1,  name: 'diagonal' },    // ↗
+    { dr: 0, dc: 1, name: "horizontal" }, // →
+    { dr: 0, dc: -1, name: "horizontal" }, // ←
+    { dr: 1, dc: 0, name: "vertical" }, // ↓
+    { dr: -1, dc: 0, name: "vertical" }, // ↑
+    { dr: 1, dc: 1, name: "diagonal" }, // ↘
+    { dr: -1, dc: -1, name: "diagonal" }, // ↖
+    { dr: 1, dc: -1, name: "diagonal" }, // ↙
+    { dr: -1, dc: 1, name: "diagonal" }, // ↗
   ];
 
   // For each of the 4 axis-pairs, build the full line through (row,col) and extract words
   const axes = [
-    [directions[0], directions[1]],   // horizontal
-    [directions[2], directions[3]],   // vertical
-    [directions[4], directions[5]],   // diagonal ↘↖
-    [directions[6], directions[7]],   // diagonal ↙↗
+    [directions[0], directions[1]], // horizontal
+    [directions[2], directions[3]], // vertical
+    [directions[4], directions[5]], // diagonal ↘↖
+    [directions[6], directions[7]], // diagonal ↙↗
   ];
 
   const results = [];
@@ -48,7 +48,8 @@ function buildLine(grid, row, col, fwd, bwd, size) {
   const cells = [];
 
   // Walk backward first
-  let r = row + bwd.dr, c = col + bwd.dc;
+  let r = row + bwd.dr,
+    c = col + bwd.dc;
   const backCells = [];
   while (r >= 0 && r < size && c >= 0 && c < size) {
     backCells.unshift({ r, c, ch: grid[r][c] });
@@ -76,17 +77,17 @@ function extractWordsFromLine(line) {
   let current = [];
 
   for (const cell of line) {
-    if (cell.ch !== '') {
+    if (cell.ch !== "") {
       current.push(cell);
     } else {
       if (current.length >= 3) {
-        words.push({ word: current.map((c) => c.ch).join(''), cells: current });
+        words.push({ word: current.map((c) => c.ch).join(""), cells: current });
       }
       current = [];
     }
   }
   if (current.length >= 3) {
-    words.push({ word: current.map((c) => c.ch).join(''), cells: current });
+    words.push({ word: current.map((c) => c.ch).join(""), cells: current });
   }
 
   return words;
