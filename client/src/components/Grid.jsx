@@ -1,23 +1,23 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import GridCell from './GridCell.jsx';
-import useGameStore from '../store/useGameStore.js';
-import { getSocket } from '../utils/socket.js';
+import React, { useState, useCallback, useMemo } from "react";
+import GridCell from "./GridCell.jsx";
+import useGameStore from "../store/useGameStore.js";
+import { getSocket } from "../utils/socket.js";
 
 /**
  * Renders the N×N grid. Cells are memoized.
  * Input overlay pops up when you click an empty cell.
  */
 export default function Grid() {
-  const grid        = useGameStore((s) => s.grid);
-  const gridSize    = useGameStore((s) => s.gridSize);
+  const grid = useGameStore((s) => s.grid);
+  const gridSize = useGameStore((s) => s.gridSize);
   const currentTurn = useGameStore((s) => s.currentTurn);
-  const playerId    = useGameStore((s) => s.playerId);
-  const roomCode    = useGameStore((s) => s.roomCode);
+  const playerId = useGameStore((s) => s.playerId);
+  const roomCode = useGameStore((s) => s.roomCode);
   const lastWordFlash = useGameStore((s) => s.lastWordFlash);
 
-  const [pending, setPending]  = useState(null);  // { row, col }
-  const [letter,  setLetter]   = useState('');
-  const [error,   setError]    = useState('');
+  const [pending, setPending] = useState(null); // { row, col }
+  const [letter, setLetter] = useState("");
+  const [error, setError] = useState("");
 
   const isMyTurn = currentTurn === playerId;
 
@@ -35,32 +35,39 @@ export default function Grid() {
 
   const handleCellClick = useCallback((row, col) => {
     setPending({ row, col });
-    setLetter('');
-    setError('');
+    setLetter("");
+    setError("");
   }, []);
 
   const handleSubmit = () => {
     const trimmed = letter.trim().toUpperCase();
     if (!trimmed || !/^[A-Z]$/.test(trimmed)) {
-      setError('Enter a single letter A–Z.');
+      setError("Enter a single letter A–Z.");
       return;
     }
 
     const socket = getSocket();
-    socket.emit('place_letter', { roomCode, row: pending.row, col: pending.col, letter: trimmed }, (res) => {
-      if (!res.success) {
-        setError(res.error || 'Could not place letter.');
-      } else {
-        setPending(null);
-        setLetter('');
-        setError('');
-      }
-    });
+    socket.emit(
+      "place_letter",
+      { roomCode, row: pending.row, col: pending.col, letter: trimmed },
+      (res) => {
+        if (!res.success) {
+          setError(res.error || "Could not place letter.");
+        } else {
+          setPending(null);
+          setLetter("");
+          setError("");
+        }
+      },
+    );
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSubmit();
-    if (e.key === 'Escape') { setPending(null); setError(''); }
+    if (e.key === "Enter") handleSubmit();
+    if (e.key === "Escape") {
+      setPending(null);
+      setError("");
+    }
     // Auto-fill single letter key presses
     if (/^[a-zA-Z]$/.test(e.key)) setLetter(e.key.toUpperCase());
   };
@@ -75,12 +82,12 @@ export default function Grid() {
       <div
         className="relative rounded-2xl overflow-hidden border border-white/10 shadow-glass backdrop-blur-sm"
         style={{
-          display: 'grid',
+          display: "grid",
           gridTemplateColumns: `repeat(${gridSize}, ${cellSize}px)`,
-          gridTemplateRows:    `repeat(${gridSize}, ${cellSize}px)`,
+          gridTemplateRows: `repeat(${gridSize}, ${cellSize}px)`,
           gap: 1,
           padding: 6,
-          background: 'rgba(255,255,255,0.03)',
+          background: "rgba(255,255,255,0.03)",
         }}
       >
         {grid.map((row, r) =>
@@ -95,17 +102,25 @@ export default function Grid() {
               onClick={handleCellClick}
               cellSize={cellSize}
             />
-          ))
+          )),
         )}
 
         {/* Letter input overlay */}
         {pending && (
           <div
             className="absolute inset-0 flex items-center justify-center z-20"
-            style={{ backdropFilter: 'blur(4px)', background: 'rgba(0,0,0,0.55)' }}
-            onClick={(e) => { if (e.target === e.currentTarget) setPending(null); }}
+            style={{
+              backdropFilter: "blur(4px)",
+              background: "rgba(0,0,0,0.55)",
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setPending(null);
+            }}
           >
-            <div className="glass-card p-6 flex flex-col items-center gap-3 min-w-[200px]" onKeyDown={handleKeyDown}>
+            <div
+              className="glass-card p-6 flex flex-col items-center gap-3 min-w-[200px]"
+              onKeyDown={handleKeyDown}
+            >
               <span className="text-white/60 text-sm">
                 Cell ({pending.row},{pending.col}) — Enter letter:
               </span>
@@ -114,12 +129,22 @@ export default function Grid() {
                 className="glass-input text-center text-3xl font-mono font-bold uppercase tracking-widest w-20"
                 maxLength={1}
                 value={letter}
-                onChange={(e) => { setLetter(e.target.value.toUpperCase()); setError(''); }}
+                onChange={(e) => {
+                  setLetter(e.target.value.toUpperCase());
+                  setError("");
+                }}
               />
               {error && <span className="text-red-400 text-xs">{error}</span>}
               <div className="flex gap-2 w-full">
-                <button className="btn-primary flex-1" onClick={handleSubmit}>Place</button>
-                <button className="btn-secondary flex-1" onClick={() => setPending(null)}>Cancel</button>
+                <button className="btn-primary flex-1" onClick={handleSubmit}>
+                  Place
+                </button>
+                <button
+                  className="btn-secondary flex-1"
+                  onClick={() => setPending(null)}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
@@ -127,12 +152,14 @@ export default function Grid() {
       </div>
 
       {/* Turn label */}
-      <div className={`text-sm font-medium px-4 py-1.5 rounded-full transition-all duration-300 ${
-        isMyTurn
-          ? 'bg-violet-500/20 text-violet-300 shadow-glow animate-pulse-glow'
-          : 'bg-white/5 text-white/40'
-      }`}>
-        {isMyTurn ? '✦ Your turn — click a cell' : 'Waiting for opponent…'}
+      <div
+        className={`text-sm font-medium px-4 py-1.5 rounded-full transition-all duration-300 ${
+          isMyTurn
+            ? "bg-violet-500/20 text-violet-300 shadow-glow animate-pulse-glow"
+            : "bg-white/5 text-white/40"
+        }`}
+      >
+        {isMyTurn ? "✦ Your turn — click a cell" : "Waiting for opponent…"}
       </div>
     </div>
   );
