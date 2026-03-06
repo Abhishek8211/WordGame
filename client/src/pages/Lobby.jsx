@@ -1,33 +1,36 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Crown, UserX, Play, Settings, Users } from 'lucide-react';
-import useGameStore from '../store/useGameStore.js';
-import { getSocket } from '../utils/socket.js';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Copy, Crown, UserX, Play, Settings, Users } from "lucide-react";
+import useGameStore from "../store/useGameStore.js";
+import { getSocket } from "../utils/socket.js";
 
 export default function Lobby() {
-  const navigate    = useNavigate();
-  const roomCode    = useGameStore((s) => s.roomCode);
-  const players     = useGameStore((s) => s.players);
-  const isHost      = useGameStore((s) => s.isHost);
-  const gridSize    = useGameStore((s) => s.gridSize);
-  const playerId    = useGameStore((s) => s.playerId);
-  const setPlayers  = useGameStore((s) => s.setPlayers);
+  const navigate = useNavigate();
+  const roomCode = useGameStore((s) => s.roomCode);
+  const players = useGameStore((s) => s.players);
+  const isHost = useGameStore((s) => s.isHost);
+  const gridSize = useGameStore((s) => s.gridSize);
+  const playerId = useGameStore((s) => s.playerId);
+  const setPlayers = useGameStore((s) => s.setPlayers);
   const setGridSize = useGameStore((s) => s.setGridSize);
-  const setIsHost   = useGameStore((s) => s.setIsHost);
-  const setGrid     = useGameStore((s) => s.setGrid);
+  const setIsHost = useGameStore((s) => s.setIsHost);
+  const setGrid = useGameStore((s) => s.setGrid);
   const setCurrentTurn = useGameStore((s) => s.setCurrentTurn);
   const setGameStarted = useGameStore((s) => s.setGameStarted);
-  const setScores      = useGameStore((s) => s.setScores);
+  const setScores = useGameStore((s) => s.setScores);
 
   const [copied, setCopied] = React.useState(false);
 
   useEffect(() => {
-    if (!roomCode) { navigate('/'); return; }
+    if (!roomCode) {
+      navigate("/");
+      return;
+    }
 
     const socket = getSocket();
 
-    socket.on('room_update', ({ players, gridSize }) => {
+    socket.on("room_update", ({ players, gridSize }) => {
       setPlayers(players);
       setGridSize(gridSize);
       // Update isHost status
@@ -35,24 +38,26 @@ export default function Lobby() {
       if (me) setIsHost(me.isHost);
     });
 
-    socket.on('kicked', () => {
-      navigate('/');
+    socket.on("kicked", () => {
+      navigate("/");
     });
 
-    socket.on('game_started', ({ grid, gridSize, players, currentTurn }) => {
+    socket.on("game_started", ({ grid, gridSize, players, currentTurn }) => {
       setGrid(grid);
       setGridSize(gridSize);
       setPlayers(players);
       setCurrentTurn(currentTurn);
-      setScores(players.map((p) => ({ id: p.id, name: p.name, score: p.score })));
+      setScores(
+        players.map((p) => ({ id: p.id, name: p.name, score: p.score })),
+      );
       setGameStarted(true);
-      navigate('/game');
+      navigate("/game");
     });
 
     return () => {
-      socket.off('room_update');
-      socket.off('kicked');
-      socket.off('game_started');
+      socket.off("room_update");
+      socket.off("kicked");
+      socket.off("game_started");
     };
   }, [roomCode]);
 
@@ -64,18 +69,18 @@ export default function Lobby() {
   };
 
   const kickPlayer = (targetId) => {
-    getSocket().emit('kick_player', { roomCode, targetId });
+    getSocket().emit("kick_player", { roomCode, targetId });
   };
 
   const changeGridSize = (val) => {
     const size = Number(val);
     setGridSize(size);
-    getSocket().emit('set_grid_size', { roomCode, size });
+    getSocket().emit("set_grid_size", { roomCode, size });
   };
 
   const startGame = () => {
     if (players.length < 2) return;
-    getSocket().emit('start_game', { roomCode });
+    getSocket().emit("start_game", { roomCode });
   };
 
   return (
@@ -91,12 +96,16 @@ export default function Lobby() {
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
             Lobby
           </h1>
-          <p className="text-white/40 text-sm mt-1">Share the code · Wait for friends</p>
+          <p className="text-white/40 text-sm mt-1">
+            Share the code · Wait for friends
+          </p>
         </div>
 
         {/* Room Code Card */}
         <div className="glass-card p-6 flex flex-col items-center gap-4">
-          <span className="text-white/50 text-xs uppercase tracking-widest">Room Code</span>
+          <span className="text-white/50 text-xs uppercase tracking-widest">
+            Room Code
+          </span>
           <div className="flex items-center gap-3">
             <span className="text-5xl font-mono font-extrabold tracking-[0.25em] text-violet-300 select-all">
               {roomCode}
@@ -141,9 +150,16 @@ export default function Lobby() {
                     className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/8"
                   >
                     <div className="flex items-center gap-2">
-                      {p.isHost && <Crown size={14} className="text-amber-400" />}
-                      <span className={`font-medium ${isMe ? 'text-violet-300' : 'text-white'}`}>
-                        {p.name} {isMe && <span className="text-white/30 text-xs">(you)</span>}
+                      {p.isHost && (
+                        <Crown size={14} className="text-amber-400" />
+                      )}
+                      <span
+                        className={`font-medium ${isMe ? "text-violet-300" : "text-white"}`}
+                      >
+                        {p.name}{" "}
+                        {isMe && (
+                          <span className="text-white/30 text-xs">(you)</span>
+                        )}
                       </span>
                     </div>
                     {isHost && !isMe && (
@@ -177,7 +193,9 @@ export default function Lobby() {
             <div>
               <div className="flex justify-between text-xs text-white/50 mb-2">
                 <span>Grid Size</span>
-                <span className="font-mono text-violet-300 font-semibold">{gridSize} × {gridSize}</span>
+                <span className="font-mono text-violet-300 font-semibold">
+                  {gridSize} × {gridSize}
+                </span>
               </div>
               <input
                 type="range"
@@ -199,13 +217,13 @@ export default function Lobby() {
 
             <button
               className={`btn-primary py-3.5 text-base flex items-center justify-center gap-2 ${
-                players.length < 2 ? 'opacity-50 cursor-not-allowed' : ''
+                players.length < 2 ? "opacity-50 cursor-not-allowed" : ""
               }`}
               onClick={startGame}
               disabled={players.length < 2}
             >
               <Play size={18} />
-              {players.length < 2 ? 'Need at least 2 players' : 'Start Game'}
+              {players.length < 2 ? "Need at least 2 players" : "Start Game"}
             </button>
           </motion.div>
         )}
