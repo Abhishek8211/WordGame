@@ -7,21 +7,78 @@
 let wordSet;
 
 try {
-  const words = require('an-array-of-english-words');
+  const words = require("an-array-of-english-words");
   wordSet = new Set(words.map((w) => w.toUpperCase()));
   console.log(`[Dict] Loaded ${wordSet.size} words.`);
 } catch {
   // Fallback minimal set if package missing
   const fallback = [
-    'CAT','DOG','RUN','SIT','THE','AND','FOR','ARE','BUT','NOT','YOU',
-    'ALL','CAN','HER','WAS','ONE','OUR','OUT','DAY','GOT','HOW','MAN',
-    'NEW','NOW','OLD','SEE','TWO','WAY','WHO','BOY','DID','ITS','LET',
-    'PUT','SAY','SHE','TOO','USE','WORD','HAVE','FROM','THEY','KNOW',
-    'WANT','BEEN','GOOD','MUCH','SOME','TIME','VERY','WHEN','COME',
-    'EACH','GIVE','MOST','TELL','GAME','GRID','PLAY','WORD','LETTER',
+    "CAT",
+    "DOG",
+    "RUN",
+    "SIT",
+    "THE",
+    "AND",
+    "FOR",
+    "ARE",
+    "BUT",
+    "NOT",
+    "YOU",
+    "ALL",
+    "CAN",
+    "HER",
+    "WAS",
+    "ONE",
+    "OUR",
+    "OUT",
+    "DAY",
+    "GOT",
+    "HOW",
+    "MAN",
+    "NEW",
+    "NOW",
+    "OLD",
+    "SEE",
+    "TWO",
+    "WAY",
+    "WHO",
+    "BOY",
+    "DID",
+    "ITS",
+    "LET",
+    "PUT",
+    "SAY",
+    "SHE",
+    "TOO",
+    "USE",
+    "WORD",
+    "HAVE",
+    "FROM",
+    "THEY",
+    "KNOW",
+    "WANT",
+    "BEEN",
+    "GOOD",
+    "MUCH",
+    "SOME",
+    "TIME",
+    "VERY",
+    "WHEN",
+    "COME",
+    "EACH",
+    "GIVE",
+    "MOST",
+    "TELL",
+    "GAME",
+    "GRID",
+    "PLAY",
+    "WORD",
+    "LETTER",
   ];
   wordSet = new Set(fallback);
-  console.warn('[Dict] Fallback dictionary active. Run: npm install an-array-of-english-words');
+  console.warn(
+    "[Dict] Fallback dictionary active. Run: npm install an-array-of-english-words",
+  );
 }
 
 /**
