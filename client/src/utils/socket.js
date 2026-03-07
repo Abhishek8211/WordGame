@@ -1,7 +1,7 @@
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 
 // The server URL – in dev the Vite proxy forwards /socket.io to port 3001
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:3001";
 
 let socket = null;
 
