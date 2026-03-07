@@ -56,4 +56,11 @@ function getRoomByPlayer(playerId) {
   return playerRoomMap.get(playerId) || null;
 }
 
-module.exports = { createRoom, getRoom, removeRoom, addPlayerToRoom, removePlayerFromRoom, getRoomByPlayer };
+module.exports = {
+  createRoom,
+  getRoom,
+  removeRoom,
+  addPlayerToRoom,
+  removePlayerFromRoom,
+  getRoomByPlayer,
+};
