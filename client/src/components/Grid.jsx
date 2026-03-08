@@ -14,6 +14,7 @@ export default function Grid() {
   const playerId = useGameStore((s) => s.playerId);
   const roomCode = useGameStore((s) => s.roomCode);
   const lastWordFlash = useGameStore((s) => s.lastWordFlash);
+  const theme = useGameStore((s) => s.theme);
 
   const [pending, setPending] = useState(null); // { row, col }
   const [letter, setLetter] = useState("");
@@ -73,21 +74,26 @@ export default function Grid() {
   };
 
   if (!grid || grid.length === 0) {
-    return <div className="text-white/40 text-sm">Waiting for grid…</div>;
+    return (
+      <div className="text-slate-400 dark:text-white/40 text-sm">
+        Waiting for grid…
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col items-center gap-4">
       {/* Grid */}
       <div
-        className="relative rounded-2xl overflow-hidden border border-white/10 shadow-glass backdrop-blur-sm"
+        className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-glass backdrop-blur-sm"
         style={{
           display: "grid",
           gridTemplateColumns: `repeat(${gridSize}, ${cellSize}px)`,
           gridTemplateRows: `repeat(${gridSize}, ${cellSize}px)`,
           gap: 1,
           padding: 6,
-          background: "rgba(255,255,255,0.03)",
+          background:
+            theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)",
         }}
       >
         {grid.map((row, r) =>
@@ -121,7 +127,7 @@ export default function Grid() {
               className="glass-card p-6 flex flex-col items-center gap-3 min-w-[200px]"
               onKeyDown={handleKeyDown}
             >
-              <span className="text-white/60 text-sm">
+              <span className="text-slate-500 dark:text-white/60 text-sm">
                 Cell ({pending.row},{pending.col}) — Enter letter:
               </span>
               <input
@@ -134,7 +140,11 @@ export default function Grid() {
                   setError("");
                 }}
               />
-              {error && <span className="text-red-400 text-xs">{error}</span>}
+              {error && (
+                <span className="text-red-500 dark:text-red-400 text-xs">
+                  {error}
+                </span>
+              )}
               <div className="flex gap-2 w-full">
                 <button className="btn-primary flex-1" onClick={handleSubmit}>
                   Place
@@ -156,7 +166,7 @@ export default function Grid() {
         className={`text-sm font-medium px-4 py-1.5 rounded-full transition-all duration-300 ${
           isMyTurn
             ? "bg-violet-500/20 text-violet-300 shadow-glow animate-pulse-glow"
-            : "bg-white/5 text-white/40"
+            : "bg-gray-100 text-slate-500 dark:bg-white/5 dark:text-white/40"
         }`}
       >
         {isMyTurn ? "✦ Your turn — click a cell" : "Waiting for opponent…"}
