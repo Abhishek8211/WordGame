@@ -16,7 +16,7 @@ export default function App() {
 
   return (
     <div className={theme === "dark" ? "dark" : ""}>
-      <div className="min-h-screen bg-gray-950 dark:bg-gray-950 light:bg-slate-100 relative overflow-hidden">
+      <div className="min-h-screen bg-slate-100 dark:bg-gray-950 relative overflow-hidden">
         {/* Anti-gravity background layer */}
         <Background />
 
