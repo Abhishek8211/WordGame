@@ -138,7 +138,7 @@ export default function Home() {
           >
             WordGrid
           </motion.h1>
-          <p className="text-white/40 mt-2 text-sm tracking-wide">
+          <p className="text-slate-500 dark:text-white/40 mt-2 text-sm tracking-wide">
             Multiplayer word battle
           </p>
         </div>
@@ -147,7 +147,7 @@ export default function Home() {
         <div className="glass-card w-full p-8 flex flex-col gap-5">
           {/* Name input */}
           <div>
-            <label className="text-white/50 text-xs font-medium uppercase tracking-wider mb-1.5 block">
+            <label className="text-slate-500 dark:text-white/50 text-xs font-medium uppercase tracking-wider mb-1.5 block">
               Your Name
             </label>
             <input
@@ -172,7 +172,7 @@ export default function Home() {
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
                 mode === "create"
                   ? "bg-violet-600 text-white shadow-glow"
-                  : "bg-white/5 text-white/60 hover:bg-white/10 border border-white/10"
+                  : "bg-gray-100 text-slate-600 hover:bg-gray-200 border border-gray-300 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:border-white/10"
               }`}
               onClick={() => {
                 setMode("create");
@@ -185,7 +185,7 @@ export default function Home() {
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
                 mode === "join"
                   ? "bg-violet-600 text-white shadow-glow"
-                  : "bg-white/5 text-white/60 hover:bg-white/10 border border-white/10"
+                  : "bg-gray-100 text-slate-600 hover:bg-gray-200 border border-gray-300 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:border-white/10"
               }`}
               onClick={() => {
                 setMode("join");
@@ -203,13 +203,13 @@ export default function Home() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
             >
-              <label className="text-white/50 text-xs font-medium uppercase tracking-wider mb-1.5 block">
+              <label className="text-slate-500 dark:text-white/50 text-xs font-medium uppercase tracking-wider mb-1.5 block">
                 Room Code
               </label>
               <div className="relative">
                 <Hash
                   size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/30"
                 />
                 <input
                   className="glass-input pl-9 font-mono uppercase tracking-widest text-lg"
@@ -229,7 +229,7 @@ export default function Home() {
           {/* Error */}
           {error && (
             <motion.p
-              className="text-red-400 text-sm text-center"
+              className="text-red-500 dark:text-red-400 text-sm text-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
