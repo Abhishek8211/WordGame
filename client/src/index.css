@@ -14,10 +14,12 @@
 @layer components {
   /* ── Glassmorphism Card ── */
   .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-glass;
+    @apply bg-white/90 backdrop-blur-md border border-gray-200 rounded-2xl shadow-glass;
+    @apply dark:bg-white/5 dark:border-white/10;
   }
   .glass-card-sm {
-    @apply bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl shadow-glass;
+    @apply bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl shadow-glass;
+    @apply dark:bg-white/5 dark:border-white/10;
   }
 
   /* ── Buttons ── */
@@ -27,35 +29,42 @@
            focus:outline-none focus:ring-2 focus:ring-violet-400/60;
   }
   .btn-secondary {
-    @apply px-6 py-3 rounded-xl font-semibold text-violet-300 bg-white/5 hover:bg-white/10
-           border border-white/10 hover:border-violet-500/50 transition-all duration-200 active:scale-95;
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-200 active:scale-95;
+    @apply text-violet-700 bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-violet-500/50;
+    @apply dark:text-violet-300 dark:bg-white/5 dark:hover:bg-white/10 dark:border-white/10 dark:hover:border-violet-500/50;
   }
   .btn-danger {
-    @apply px-3 py-1.5 rounded-lg text-sm font-medium text-red-300 bg-red-500/10 hover:bg-red-500/20
-           border border-red-500/20 transition-all duration-200 active:scale-95;
+    @apply px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-95;
+    @apply text-red-600 bg-red-50 hover:bg-red-100 border border-red-200;
+    @apply dark:text-red-300 dark:bg-red-500/10 dark:hover:bg-red-500/20 dark:border-red-500/20;
   }
 
   /* ── Input ── */
   .glass-input {
-    @apply w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white
-           placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500/50
-           focus:border-violet-500/50 transition-all duration-200;
+    @apply w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2
+           focus:ring-violet-500/50 focus:border-violet-500/50 transition-all duration-200;
+    @apply bg-white border-gray-300 text-gray-900 placeholder:text-gray-400;
+    @apply dark:bg-white/5 dark:border-white/10 dark:text-white dark:placeholder:text-white/30;
   }
 
   /* ── Grid Cell ── */
   .grid-cell {
     @apply flex items-center justify-center font-mono font-bold uppercase
-           border border-white/10 bg-white/5 backdrop-blur-xs cursor-pointer
-           transition-all duration-150 rounded-sm select-none;
+           backdrop-blur-xs cursor-pointer transition-all duration-150 rounded-sm select-none;
+    @apply border border-gray-200 bg-gray-50 text-gray-800;
+    @apply dark:border-white/10 dark:bg-white/5 dark:text-white;
   }
   .grid-cell-empty {
-    @apply hover:bg-violet-500/20 hover:border-violet-500/40 hover:shadow-glow;
+    @apply hover:bg-violet-100 hover:border-violet-400 hover:shadow-glow;
+    @apply dark:hover:bg-violet-500/20 dark:hover:border-violet-500/40;
   }
   .grid-cell-filled {
-    @apply bg-violet-900/40 border-violet-500/40 text-violet-100 cursor-default;
+    @apply bg-violet-100 border-violet-300 text-violet-900 cursor-default;
+    @apply dark:bg-violet-900/40 dark:border-violet-500/40 dark:text-violet-100;
   }
   .grid-cell-new-word {
-    @apply bg-emerald-500/30 border-emerald-400/60 text-emerald-100 animate-bounce-in;
+    @apply bg-emerald-100 border-emerald-400 text-emerald-800 animate-bounce-in;
+    @apply dark:bg-emerald-500/30 dark:border-emerald-400/60 dark:text-emerald-100;
   }
   .grid-cell-active-turn {
     @apply ring-2 ring-violet-400/70 ring-offset-1 ring-offset-transparent;
