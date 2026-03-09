@@ -1,7 +1,16 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Crown, UserX, Play, Settings, Users } from "lucide-react";
+import {
+  Copy,
+  Crown,
+  UserX,
+  Play,
+  Settings,
+  Users,
+  Sun,
+  Moon,
+} from "lucide-react";
 import useGameStore from "../store/useGameStore.js";
 import { getSocket } from "../utils/socket.js";
 
@@ -19,6 +28,8 @@ export default function Lobby() {
   const setCurrentTurn = useGameStore((s) => s.setCurrentTurn);
   const setGameStarted = useGameStore((s) => s.setGameStarted);
   const setScores = useGameStore((s) => s.setScores);
+  const theme = useGameStore((s) => s.theme);
+  const toggleTheme = useGameStore((s) => s.toggleTheme);
 
   const [copied, setCopied] = React.useState(false);
 
@@ -85,6 +96,15 @@ export default function Lobby() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
+      {/* Theme toggle */}
+      <button
+        className="fixed top-5 right-5 btn-secondary p-2 rounded-xl"
+        onClick={toggleTheme}
+        title="Toggle theme"
+      >
+        {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+      </button>
+
       <motion.div
         className="w-full max-w-lg flex flex-col gap-6"
         initial={{ opacity: 0, y: 24 }}
@@ -96,18 +116,18 @@ export default function Lobby() {
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
             Lobby
           </h1>
-          <p className="text-white/40 text-sm mt-1">
+          <p className="text-slate-500 dark:text-white/40 text-sm mt-1">
             Share the code · Wait for friends
           </p>
         </div>
 
         {/* Room Code Card */}
         <div className="glass-card p-6 flex flex-col items-center gap-4">
-          <span className="text-white/50 text-xs uppercase tracking-widest">
+          <span className="text-slate-500 dark:text-white/50 text-xs uppercase tracking-widest">
             Room Code
           </span>
           <div className="flex items-center gap-3">
-            <span className="text-5xl font-mono font-extrabold tracking-[0.25em] text-violet-300 select-all">
+            <span className="text-5xl font-mono font-extrabold tracking-[0.25em] text-violet-600 dark:text-violet-300 select-all">
               {roomCode}
             </span>
             <button
@@ -132,7 +152,7 @@ export default function Lobby() {
 
         {/* Players */}
         <div className="glass-card p-5 flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-white font-semibold text-sm">
+          <div className="flex items-center gap-2 text-gray-800 dark:text-white font-semibold text-sm">
             <Users size={16} className="text-violet-400" />
             Players ({players.length}/6)
           </div>
@@ -147,18 +167,20 @@ export default function Lobby() {
                     initial={{ opacity: 0, x: -12 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 12 }}
-                    className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/8"
+                    className="flex items-center justify-between px-4 py-3 rounded-xl bg-gray-100 border border-gray-200 dark:bg-white/5 dark:border-white/8"
                   >
                     <div className="flex items-center gap-2">
                       {p.isHost && (
                         <Crown size={14} className="text-amber-400" />
                       )}
                       <span
-                        className={`font-medium ${isMe ? "text-violet-300" : "text-white"}`}
+                        className={`font-medium ${isMe ? "text-violet-600 dark:text-violet-300" : "text-gray-800 dark:text-white"}`}
                       >
                         {p.name}{" "}
                         {isMe && (
-                          <span className="text-white/30 text-xs">(you)</span>
+                          <span className="text-slate-400 dark:text-white/30 text-xs">
+                            (you)
+                          </span>
                         )}
                       </span>
                     </div>
@@ -184,14 +206,14 @@ export default function Lobby() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <div className="flex items-center gap-2 text-white font-semibold text-sm">
+            <div className="flex items-center gap-2 text-gray-800 dark:text-white font-semibold text-sm">
               <Settings size={16} className="text-violet-400" />
               Game Settings
             </div>
 
             {/* Grid size slider */}
             <div>
-              <div className="flex justify-between text-xs text-white/50 mb-2">
+              <div className="flex justify-between text-xs text-slate-500 dark:text-white/50 mb-2">
                 <span>Grid Size</span>
                 <span className="font-mono text-violet-300 font-semibold">
                   {gridSize} × {gridSize}
@@ -209,7 +231,7 @@ export default function Lobby() {
                   background: `linear-gradient(to right, #7c3aed ${((gridSize - 10) / 10) * 100}%, rgba(255,255,255,0.1) 0%)`,
                 }}
               />
-              <div className="flex justify-between text-xs text-white/25 mt-1">
+              <div className="flex justify-between text-xs text-slate-400 dark:text-white/25 mt-1">
                 <span>10×10</span>
                 <span>20×20</span>
               </div>
@@ -229,7 +251,7 @@ export default function Lobby() {
         )}
 
         {!isHost && (
-          <p className="text-white/30 text-center text-sm animate-pulse">
+          <p className="text-slate-500 dark:text-white/30 text-center text-sm animate-pulse">
             Waiting for host to start the game…
           </p>
         )}
