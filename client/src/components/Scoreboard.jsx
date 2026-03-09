@@ -18,7 +18,7 @@ export default function Scoreboard() {
 
   return (
     <div className="glass-card p-4 flex flex-col gap-3 min-w-[200px]">
-      <div className="flex items-center gap-2 text-white font-semibold text-sm">
+      <div className="flex items-center gap-2 text-gray-800 dark:text-white font-semibold text-sm">
         <Trophy size={16} className="text-amber-400" />
         Scoreboard
       </div>
@@ -38,16 +38,16 @@ export default function Scoreboard() {
                 className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all duration-300 ${
                   isActive
                     ? "bg-violet-500/20 border border-violet-500/30 shadow-glow"
-                    : "bg-white/5 border border-transparent"
+                    : "bg-gray-100 border border-transparent dark:bg-white/5"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <span
-                    className={`text-xs font-mono ${idx === 0 ? "text-amber-400" : "text-white/30"}`}
+                    className={`text-xs font-mono ${idx === 0 ? "text-amber-400" : "text-slate-400 dark:text-white/30"}`}
                   >
                     #{idx + 1}
                   </span>
-                  <span className="text-white font-medium truncate max-w-[110px]">
+                  <span className="text-gray-800 dark:text-white font-medium truncate max-w-[110px]">
                     {p.name}
                   </span>
                   {isActive && (
@@ -74,8 +74,10 @@ export default function Scoreboard() {
 
       {/* Recent words */}
       {wordsFound.length > 0 && (
-        <div className="border-t border-white/10 pt-3">
-          <div className="text-white/40 text-xs mb-1">Words Found</div>
+        <div className="border-t border-gray-200 dark:border-white/10 pt-3">
+          <div className="text-slate-500 dark:text-white/40 text-xs mb-1">
+            Words Found
+          </div>
           <div className="flex flex-wrap gap-1 max-h-28 overflow-y-auto">
             {[...wordsFound]
               .reverse()
