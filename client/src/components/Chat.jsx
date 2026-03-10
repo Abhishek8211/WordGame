@@ -36,7 +36,7 @@ export default function Chat() {
     <>
       {/* Toggle button */}
       <button
-        className="fixed bottom-6 right-6 z-30 btn-primary w-12 h-12 flex items-center justify-center rounded-full p-0 shadow-glow-lg"
+        className="fixed bottom-6 right-4 sm:right-6 z-30 btn-primary w-12 h-12 flex items-center justify-center rounded-full p-0 shadow-glow-lg"
         onClick={toggleChat}
         title="Toggle Chat"
       >
@@ -52,7 +52,7 @@ export default function Chat() {
       <AnimatePresence>
         {chatOpen && (
           <motion.aside
-            className="fixed right-0 top-0 bottom-0 z-40 flex flex-col w-80 glass-card rounded-none rounded-l-2xl border-r-0"
+            className="fixed right-0 top-0 bottom-0 z-40 flex flex-col w-full sm:w-80 glass-card rounded-none sm:rounded-l-2xl border-r-0"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
