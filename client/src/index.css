@@ -8,6 +8,16 @@
   }
   body {
     @apply overflow-x-hidden;
+    /* Prevent pull-to-refresh & overscroll on mobile game screens */
+    overscroll-behavior: none;
+  }
+  /* Prevent double-tap zoom on interactive elements */
+  button,
+  input,
+  select,
+  textarea,
+  a {
+    touch-action: manipulation;
   }
 }
 
@@ -27,16 +37,20 @@
     @apply px-6 py-3 rounded-xl font-semibold text-white bg-violet-600 hover:bg-violet-500
            shadow-glow hover:shadow-glow-lg transition-all duration-200 active:scale-95
            focus:outline-none focus:ring-2 focus:ring-violet-400/60;
+    /* Minimum touch target */
+    min-height: 44px;
   }
   .btn-secondary {
     @apply px-6 py-3 rounded-xl font-semibold transition-all duration-200 active:scale-95;
     @apply text-violet-700 bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-violet-500/50;
     @apply dark:text-violet-300 dark:bg-white/5 dark:hover:bg-white/10 dark:border-white/10 dark:hover:border-violet-500/50;
+    min-height: 44px;
   }
   .btn-danger {
     @apply px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 active:scale-95;
     @apply text-red-600 bg-red-50 hover:bg-red-100 border border-red-200;
     @apply dark:text-red-300 dark:bg-red-500/10 dark:hover:bg-red-500/20 dark:border-red-500/20;
+    min-height: 36px;
   }
 
   /* ── Input ── */
@@ -45,6 +59,7 @@
            focus:ring-violet-500/50 focus:border-violet-500/50 transition-all duration-200;
     @apply bg-white border-gray-300 text-gray-900 placeholder:text-gray-400;
     @apply dark:bg-white/5 dark:border-white/10 dark:text-white dark:placeholder:text-white/30;
+    min-height: 44px;
   }
 
   /* ── Grid Cell ── */
