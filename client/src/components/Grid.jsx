@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import GridCell from "./GridCell.jsx";
 import useGameStore from "../store/useGameStore.js";
 import { getSocket } from "../utils/socket.js";
@@ -19,6 +19,13 @@ export default function Grid() {
   const [pending, setPending] = useState(null); // { row, col }
   const [letter, setLetter] = useState("");
   const [error, setError] = useState("");
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const onResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const isMyTurn = currentTurn === playerId;
 
@@ -30,9 +37,12 @@ export default function Grid() {
 
   // Compute cell pixel size based on grid to fit viewport
   const cellSize = useMemo(() => {
-    const maxPx = Math.min(window.innerWidth * 0.58, 640);
-    return Math.floor(maxPx / gridSize);
-  }, [gridSize]);
+    const isMobile = windowWidth < 640;
+    const maxPx = isMobile
+      ? Math.min(windowWidth * 0.94 - 16, 520)
+      : Math.min(windowWidth * 0.58, 640);
+    return Math.max(Math.floor(maxPx / gridSize), isMobile ? 24 : 28);
+  }, [gridSize, windowWidth]);
 
   const handleCellClick = useCallback((row, col) => {
     setPending({ row, col });
@@ -82,83 +92,96 @@ export default function Grid() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Grid */}
-      <div
-        className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-glass backdrop-blur-sm"
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${gridSize}, ${cellSize}px)`,
-          gridTemplateRows: `repeat(${gridSize}, ${cellSize}px)`,
-          gap: 1,
-          padding: 6,
-          background:
-            theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)",
-        }}
-      >
-        {grid.map((row, r) =>
-          row.map((cell, c) => (
-            <GridCell
-              key={`${r}-${c}`}
-              value={cell}
-              row={r}
-              col={c}
-              isMyTurn={isMyTurn}
-              isNewWord={flashCells.has(`${r}-${c}`)}
-              onClick={handleCellClick}
-              cellSize={cellSize}
-            />
-          )),
-        )}
-
-        {/* Letter input overlay */}
-        {pending && (
+    <div className="flex flex-col items-center gap-3 w-full">
+      {/* Grid — scrollable wrapper for large grids on small screens */}
+      <div className="w-full overflow-auto touch-pan-x touch-pan-y">
+        <div className="flex justify-center">
           <div
-            className="absolute inset-0 flex items-center justify-center z-20"
+            className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-glass backdrop-blur-sm"
             style={{
-              backdropFilter: "blur(4px)",
-              background: "rgba(0,0,0,0.55)",
-            }}
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setPending(null);
+              display: "grid",
+              gridTemplateColumns: `repeat(${gridSize}, ${cellSize}px)`,
+              gridTemplateRows: `repeat(${gridSize}, ${cellSize}px)`,
+              gap: 1,
+              padding: 6,
+              background:
+                theme === "dark"
+                  ? "rgba(255,255,255,0.03)"
+                  : "rgba(0,0,0,0.03)",
             }}
           >
-            <div
-              className="glass-card p-6 flex flex-col items-center gap-3 min-w-[200px]"
-              onKeyDown={handleKeyDown}
-            >
-              <span className="text-slate-500 dark:text-white/60 text-sm">
-                Cell ({pending.row},{pending.col}) — Enter letter:
-              </span>
-              <input
-                autoFocus
-                className="glass-input text-center text-3xl font-mono font-bold uppercase tracking-widest w-20"
-                maxLength={1}
-                value={letter}
-                onChange={(e) => {
-                  setLetter(e.target.value.toUpperCase());
-                  setError("");
+            {grid.map((row, r) =>
+              row.map((cell, c) => (
+                <GridCell
+                  key={`${r}-${c}`}
+                  value={cell}
+                  row={r}
+                  col={c}
+                  isMyTurn={isMyTurn}
+                  isNewWord={flashCells.has(`${r}-${c}`)}
+                  onClick={handleCellClick}
+                  cellSize={cellSize}
+                />
+              )),
+            )}
+
+            {/* Letter input overlay */}
+            {pending && (
+              <div
+                className="absolute inset-0 flex items-center justify-center z-20"
+                style={{
+                  backdropFilter: "blur(4px)",
+                  background: "rgba(0,0,0,0.55)",
                 }}
-              />
-              {error && (
-                <span className="text-red-500 dark:text-red-400 text-xs">
-                  {error}
-                </span>
-              )}
-              <div className="flex gap-2 w-full">
-                <button className="btn-primary flex-1" onClick={handleSubmit}>
-                  Place
-                </button>
-                <button
-                  className="btn-secondary flex-1"
-                  onClick={() => setPending(null)}
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) setPending(null);
+                }}
+              >
+                <div
+                  className="glass-card p-5 flex flex-col items-center gap-3 w-[min(220px,80vw)]"
+                  onKeyDown={handleKeyDown}
                 >
-                  Cancel
-                </button>
+                  <span className="text-slate-500 dark:text-white/60 text-xs text-center">
+                    Cell ({pending.row},{pending.col}) — Enter letter:
+                  </span>
+                  <input
+                    autoFocus
+                    inputMode="text"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="characters"
+                    className="glass-input text-center text-3xl font-mono font-bold uppercase tracking-widest w-20"
+                    maxLength={1}
+                    value={letter}
+                    onChange={(e) => {
+                      setLetter(e.target.value.toUpperCase());
+                      setError("");
+                    }}
+                  />
+                  {error && (
+                    <span className="text-red-500 dark:text-red-400 text-xs">
+                      {error}
+                    </span>
+                  )}
+                  <div className="flex gap-2 w-full">
+                    <button
+                      className="btn-primary flex-1 py-2.5 text-sm"
+                      onClick={handleSubmit}
+                    >
+                      Place
+                    </button>
+                    <button
+                      className="btn-secondary flex-1 py-2.5 text-sm"
+                      onClick={() => setPending(null)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Turn label */}
