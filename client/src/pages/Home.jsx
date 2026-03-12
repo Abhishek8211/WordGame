@@ -112,10 +112,10 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
       {/* Theme toggle */}
       <button
-        className="fixed top-5 right-5 btn-secondary p-2 rounded-xl"
+        className="fixed top-4 right-4 sm:top-5 sm:right-5 btn-secondary p-2 rounded-xl"
         onClick={toggleTheme}
         title="Toggle theme"
       >
@@ -131,7 +131,7 @@ export default function Home() {
         {/* Logo / Title */}
         <div className="text-center">
           <motion.h1
-            className="text-6xl font-extrabold bg-gradient-to-br from-violet-400 via-purple-300 to-pink-400 bg-clip-text text-transparent"
+            className="text-4xl sm:text-6xl font-extrabold bg-gradient-to-br from-violet-400 via-purple-300 to-pink-400 bg-clip-text text-transparent"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
@@ -144,7 +144,7 @@ export default function Home() {
         </div>
 
         {/* Card */}
-        <div className="glass-card w-full p-8 flex flex-col gap-5">
+        <div className="glass-card w-full p-5 sm:p-8 flex flex-col gap-4 sm:gap-5">
           {/* Name input */}
           <div>
             <label className="text-slate-500 dark:text-white/50 text-xs font-medium uppercase tracking-wider mb-1.5 block">
