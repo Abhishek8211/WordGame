@@ -95,10 +95,10 @@ export default function Lobby() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
       {/* Theme toggle */}
       <button
-        className="fixed top-5 right-5 btn-secondary p-2 rounded-xl"
+        className="fixed top-4 right-4 sm:top-5 sm:right-5 btn-secondary p-2 rounded-xl"
         onClick={toggleTheme}
         title="Toggle theme"
       >
@@ -113,7 +113,7 @@ export default function Lobby() {
       >
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
             Lobby
           </h1>
           <p className="text-slate-500 dark:text-white/40 text-sm mt-1">
@@ -122,12 +122,12 @@ export default function Lobby() {
         </div>
 
         {/* Room Code Card */}
-        <div className="glass-card p-6 flex flex-col items-center gap-4">
+        <div className="glass-card p-4 sm:p-6 flex flex-col items-center gap-4">
           <span className="text-slate-500 dark:text-white/50 text-xs uppercase tracking-widest">
             Room Code
           </span>
           <div className="flex items-center gap-3">
-            <span className="text-5xl font-mono font-extrabold tracking-[0.25em] text-violet-600 dark:text-violet-300 select-all">
+            <span className="text-3xl sm:text-5xl font-mono font-extrabold tracking-[0.2em] sm:tracking-[0.25em] text-violet-600 dark:text-violet-300 select-all">
               {roomCode}
             </span>
             <button
