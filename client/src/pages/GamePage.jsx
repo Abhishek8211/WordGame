@@ -94,9 +94,9 @@ export default function GamePage() {
   if (gameEnded) {
     const sorted = [...scores].sort((a, b) => b.score - a.score);
     return (
-      <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
         <motion.div
-          className="glass-card p-10 flex flex-col items-center gap-6 max-w-sm w-full"
+          className="glass-card p-7 sm:p-10 flex flex-col items-center gap-6 max-w-sm w-full"
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", stiffness: 240 }}
@@ -131,12 +131,12 @@ export default function GamePage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top bar */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-white/8 glass-card rounded-none">
-        <div className="flex items-center gap-3">
-          <span className="text-xl font-extrabold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+      <header className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-white/8 glass-card rounded-none gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-base sm:text-xl font-extrabold bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
             WordGrid
           </span>
-          <span className="glass-card-sm px-3 py-1 text-xs font-mono text-violet-300">
+          <span className="glass-card-sm px-2 py-0.5 text-xs font-mono text-violet-300 hidden xs:inline">
             {roomCode}
           </span>
         </div>
@@ -145,7 +145,7 @@ export default function GamePage() {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentTurn}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all truncate ${
               isMyTurn
                 ? "bg-violet-500/20 text-violet-300 shadow-glow"
                 : "bg-gray-100 text-slate-500 dark:bg-white/5 dark:text-white/50"
@@ -156,48 +156,52 @@ export default function GamePage() {
             transition={{ duration: 0.2 }}
           >
             <Zap
-              size={14}
+              size={12}
               className={
                 isMyTurn
-                  ? "text-violet-400"
-                  : "text-slate-400 dark:text-white/30"
+                  ? "text-violet-400 shrink-0"
+                  : "text-slate-400 dark:text-white/30 shrink-0"
               }
             />
-            {isMyTurn ? "Your Turn!" : `${currentPlayer?.name ?? "…"}'s turn`}
+            <span className="truncate max-w-[80px] sm:max-w-none">
+              {isMyTurn ? "Your Turn!" : `${currentPlayer?.name ?? "…"}'s turn`}
+            </span>
           </motion.div>
         </AnimatePresence>
 
-        <button
-          className="btn-danger flex items-center gap-1.5"
-          onClick={handleLeave}
-        >
-          <LogOut size={14} /> Leave
-        </button>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            className="btn-danger flex items-center gap-1 px-2 sm:px-3 py-1.5 text-xs sm:text-sm"
+            onClick={handleLeave}
+          >
+            <LogOut size={13} /> <span className="hidden sm:inline">Leave</span>
+          </button>
 
-        {/* Theme toggle */}
-        <button
-          className="btn-secondary p-2 rounded-xl"
-          onClick={toggleTheme}
-          title="Toggle theme"
-        >
-          {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-        </button>
+          {/* Theme toggle */}
+          <button
+            className="btn-secondary p-2 rounded-xl"
+            onClick={toggleTheme}
+            title="Toggle theme"
+          >
+            {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+          </button>
+        </div>
       </header>
 
       {/* Word flash banner */}
       <AnimatePresence>
         {lastWordFlash && (
           <motion.div
-            className="fixed top-16 left-1/2 -translate-x-1/2 z-50 glass-card px-6 py-3 flex items-center gap-3 border-emerald-500/40 bg-emerald-500/10"
+            className="fixed top-16 left-1/2 -translate-x-1/2 z-50 glass-card px-4 sm:px-6 py-2 sm:py-3 flex items-center gap-2 sm:gap-3 border-emerald-500/40 bg-emerald-500/10 max-w-[90vw]"
             initial={{ opacity: 0, y: -20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
           >
-            <span className="text-2xl">✨</span>
-            <span className="font-mono font-bold text-emerald-300 text-lg tracking-widest uppercase">
+            <span className="text-xl sm:text-2xl">✨</span>
+            <span className="font-mono font-bold text-emerald-300 text-base sm:text-lg tracking-widest uppercase">
               {lastWordFlash.word}
             </span>
-            <span className="text-emerald-400 text-sm">
+            <span className="text-emerald-400 text-xs sm:text-sm">
               +{lastWordFlash.word.length} pts
             </span>
           </motion.div>
@@ -205,27 +209,26 @@ export default function GamePage() {
       </AnimatePresence>
 
       {/* Main layout */}
-      <main className="flex-1 flex items-start justify-center gap-6 p-6 overflow-auto">
+      <main className="flex-1 flex items-start justify-center gap-4 sm:gap-6 p-2 sm:p-6 overflow-auto">
         {/* Left: Scoreboard */}
         <aside className="hidden lg:block pt-2 w-52 shrink-0">
           <Scoreboard />
         </aside>
 
         {/* Center: Grid */}
-        <div className="flex-1 flex items-start justify-center min-w-0">
-          <div className="flex flex-col items-center gap-4">
+        <div className="flex-1 flex items-start justify-center min-w-0 w-full">
+          <div className="flex flex-col items-center gap-3 w-full">
             {/* Grid size label */}
             <div className="text-slate-400 dark:text-white/30 text-xs font-mono">
               {gridSize} × {gridSize} grid
             </div>
             <Grid />
+            {/* Mobile scoreboard — inline below grid */}
+            <div className="lg:hidden w-full max-w-sm mt-1">
+              <Scoreboard />
+            </div>
           </div>
         </div>
-
-        {/* Right: Mobile scoreboard */}
-        <aside className="lg:hidden fixed bottom-20 right-6 z-20 w-44">
-          <Scoreboard />
-        </aside>
       </main>
 
       {/* Chat (slide-out panel + toggle button) */}
