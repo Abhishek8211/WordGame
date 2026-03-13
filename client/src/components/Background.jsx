@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from "react";
 
 /**
- * Anti-gravity background:
- * Renders a canvas of floating '+' grid ticks that repel from the cursor.
- * Each tick cycles through pastel purple → pink → blue with a soft glow,
- * and the whole grid gently floats via a sinusoidal parallax offset.
+ * Interactive background field.
+ * Renders floating grid ticks that repel from the pointer and drift through
+ * a cyan, amber, and emerald palette.
  */
 export default function Background() {
   const canvasRef = useRef(null);
@@ -20,16 +19,15 @@ export default function Background() {
     const REPEL_STRENGTH = 0.28;
     const RETURN_SPEED = 0.06;
     const TICK_SIZE = 6;
-    const TICK_OPACITY = 0.15; // 15% — aesthetic but not distracting
+    const TICK_OPACITY = 0.15;
     const GLOW_OPACITY = 0.55;
-    const COLOR_CYCLE_MS = 7000; // full palette loop duration
-    const FLOAT_AMPLITUDE = 5; // parallax drift px
+    const COLOR_CYCLE_MS = 7000;
+    const FLOAT_AMPLITUDE = 5;
 
-    // Title-matching pastel palette: purple · pink · blue
     const PALETTE = [
-      { r: 167, g: 139, b: 250 }, // #a78bfa
-      { r: 244, g: 114, b: 182 }, // #f472b6
-      { r: 96, g: 165, b: 250 }, // #60a5fa
+      { r: 34, g: 211, b: 238 },
+      { r: 251, g: 191, b: 36 },
+      { r: 52, g: 211, b: 153 },
     ];
 
     function lerpColor(a, b, t) {
@@ -61,7 +59,6 @@ export default function Background() {
       const total = cols * rows;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          // Spread phase offsets across the grid so colours ripple diagonally
           const phaseOffset = (r * cols + c) / total;
           ticksRef.current.push({
             ox: c * TICK_SPACING,
@@ -87,7 +84,6 @@ export default function Background() {
       ctx.moveTo(x, y - TICK_SIZE);
       ctx.lineTo(x, y + TICK_SIZE);
       ctx.stroke();
-      // Reset shadow so it doesn't bleed into clearRect next frame
       ctx.shadowBlur = 0;
     }
 
@@ -96,7 +92,6 @@ export default function Background() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const globalPhase = (timestamp / COLOR_CYCLE_MS) % 1;
-      // Slow sinusoidal floating — independent axes at different frequencies
       const floatX = Math.sin(timestamp / 4200) * FLOAT_AMPLITUDE;
       const floatY = Math.cos(timestamp / 5600) * FLOAT_AMPLITUDE;
 
@@ -114,7 +109,6 @@ export default function Background() {
           tick.vy += (dy / dist) * force * REPEL_STRENGTH * 10;
         }
 
-        // Spring toward the floating origin (not the fixed grid origin)
         tick.vx += (tick.ox + floatX - tick.x) * RETURN_SPEED;
         tick.vy += (tick.oy + floatY - tick.y) * RETURN_SPEED;
 
@@ -154,7 +148,7 @@ export default function Background() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none z-0"
+      className="fixed inset-0 z-0 h-full w-full pointer-events-none"
       aria-hidden="true"
     />
   );
