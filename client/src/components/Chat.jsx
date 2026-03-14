@@ -4,6 +4,13 @@ import { Send, X, MessageSquare } from "lucide-react";
 import useGameStore from "../store/useGameStore.js";
 import { getSocket } from "../utils/socket.js";
 
+function formatTimestamp(timestamp) {
+  return new Date(timestamp).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export default function Chat() {
   const chatOpen = useGameStore((s) => s.chatOpen);
   const toggleChat = useGameStore((s) => s.toggleChat);
@@ -34,95 +41,122 @@ export default function Chat() {
 
   return (
     <>
-      {/* Toggle button */}
       <button
-        className="fixed bottom-6 right-4 sm:right-6 z-30 btn-primary w-12 h-12 flex items-center justify-center rounded-full p-0 shadow-glow-lg"
+        className="fixed bottom-5 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400/20 bg-gradient-to-br from-cyan-400 to-emerald-400 text-slate-950 shadow-[0_26px_60px_-24px_rgba(34,211,238,0.78)] transition-transform duration-200 hover:scale-105 sm:bottom-6 sm:right-6"
         onClick={toggleChat}
         title="Toggle Chat"
       >
         <MessageSquare size={20} />
         {chat.length > 0 && (
-          <span className="absolute -top-1 -right-1 bg-violet-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-slate-950 text-[10px] font-bold text-white dark:bg-white dark:text-slate-950">
             {chat.length > 99 ? "99" : chat.length}
           </span>
         )}
       </button>
 
-      {/* Slide-out panel */}
       <AnimatePresence>
         {chatOpen && (
-          <motion.aside
-            className="fixed right-0 top-0 bottom-0 z-40 flex flex-col w-full sm:w-80 glass-card rounded-none sm:rounded-l-2xl border-r-0"
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 32 }}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-white/10">
-              <span className="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <MessageSquare size={16} className="text-violet-400" /> Chat
-              </span>
-              <button
-                onClick={toggleChat}
-                className="text-slate-400 hover:text-gray-800 dark:text-white/40 dark:hover:text-white transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 text-sm">
-              {chat.length === 0 && (
-                <p className="text-slate-400 dark:text-white/30 text-center mt-8">
-                  No messages yet…
-                </p>
-              )}
-              {chat.map((msg, i) => {
-                const isMe = msg.senderId === playerId;
-                return (
-                  <motion.div
-                    key={i}
-                    className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${
-                      isMe
-                        ? "self-end bg-violet-600/40 text-violet-100 rounded-br-none"
-                        : "self-start bg-gray-100 text-gray-800 dark:bg-white/8 dark:text-white/80 rounded-bl-none"
-                    }`}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2 }}
+          <>
+            <motion.button
+              type="button"
+              className="fixed inset-0 z-30 bg-slate-950/45 backdrop-blur-sm sm:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={toggleChat}
+            />
+            <motion.aside
+              className="fixed bottom-0 right-0 top-0 z-40 flex w-full max-w-[390px] flex-col border-l border-white/10 bg-white/90 shadow-[0_0_80px_-30px_rgba(15,23,42,0.95)] backdrop-blur-2xl dark:bg-slate-950/[0.94]"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 280, damping: 30 }}
+            >
+              <div className="border-b border-gray-200/80 p-5 dark:border-white/10">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-500 dark:text-white/38">
+                      Room Chat
+                    </p>
+                    <h2 className="mt-1 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-white">
+                      <MessageSquare size={16} className="text-cyan-300" /> Team
+                      comms
+                    </h2>
+                  </div>
+                  <button
+                    onClick={toggleChat}
+                    className="rounded-2xl border border-gray-200 bg-white/80 p-2 text-slate-500 transition-colors hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-white/45 dark:hover:text-white"
                   >
-                    {!isMe && (
-                      <div className="text-violet-400 text-xs font-medium mb-0.5">
-                        {msg.senderName}
-                      </div>
-                    )}
-                    {msg.message}
-                  </motion.div>
-                );
-              })}
-              <div ref={bottomRef} />
-            </div>
+                    <X size={18} />
+                  </button>
+                </div>
+              </div>
 
-            {/* Input */}
-            <div className="p-4 border-t border-gray-200 dark:border-white/10 flex gap-2">
-              <input
-                className="glass-input flex-1 py-2 text-sm"
-                placeholder="Type a message…"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={handleKey}
-                maxLength={200}
-              />
-              <button
-                className="btn-primary px-3 py-2 rounded-xl"
-                onClick={send}
-                disabled={!text.trim()}
-              >
-                <Send size={16} />
-              </button>
-            </div>
-          </motion.aside>
+              <div className="flex-1 overflow-y-auto px-4 py-5 text-sm">
+                <div className="flex flex-col gap-3">
+                  {chat.length === 0 && (
+                    <div className="rounded-[24px] border border-dashed border-gray-300/80 bg-white/65 px-4 py-8 text-center text-sm text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-white/38">
+                      No chat yet. Use this panel for callouts, bluffing, or
+                      bonus-tile warnings.
+                    </div>
+                  )}
+                  {chat.map((msg, i) => {
+                    const isMe = msg.senderId === playerId;
+                    return (
+                      <motion.div
+                        key={i}
+                        className={`max-w-[88%] rounded-[22px] px-4 py-3 text-sm ${
+                          isMe
+                            ? "self-end rounded-br-md bg-gradient-to-br from-cyan-400 to-emerald-400 text-slate-950"
+                            : "self-start rounded-bl-md border border-gray-200/80 bg-white/80 text-slate-800 dark:border-white/10 dark:bg-white/[0.06] dark:text-white/82"
+                        }`}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.18 }}
+                      >
+                        {!isMe && (
+                          <div className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                            {msg.senderName}
+                          </div>
+                        )}
+                        <div className="leading-6">{msg.message}</div>
+                        <div
+                          className={`mt-2 text-[10px] font-medium uppercase tracking-[0.18em] ${
+                            isMe
+                              ? "text-slate-950/70"
+                              : "text-slate-500 dark:text-white/35"
+                          }`}
+                        >
+                          {formatTimestamp(msg.timestamp)}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                  <div ref={bottomRef} />
+                </div>
+              </div>
+
+              <div className="border-t border-gray-200/80 p-4 dark:border-white/10">
+                <div className="flex gap-2">
+                  <input
+                    className="glass-input flex-1 py-3 text-sm"
+                    placeholder="Type a message"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    onKeyDown={handleKey}
+                    maxLength={200}
+                  />
+                  <button
+                    className="btn-primary rounded-2xl px-4 py-3"
+                    onClick={send}
+                    disabled={!text.trim()}
+                  >
+                    <Send size={16} />
+                  </button>
+                </div>
+              </div>
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
     </>
