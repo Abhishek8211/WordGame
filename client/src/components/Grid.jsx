@@ -14,6 +14,7 @@ export default function Grid() {
   const playerId = useGameStore((s) => s.playerId);
   const roomCode = useGameStore((s) => s.roomCode);
   const lastWordFlash = useGameStore((s) => s.lastWordFlash);
+  const bonusCells = useGameStore((s) => s.bonusCells);
   const theme = useGameStore((s) => s.theme);
 
   const [pending, setPending] = useState(null); // { row, col }
@@ -34,6 +35,14 @@ export default function Grid() {
     if (!lastWordFlash) return new Set();
     return new Set(lastWordFlash.cells.map((c) => `${c.r}-${c.c}`));
   }, [lastWordFlash]);
+
+  const bonusLookup = useMemo(
+    () =>
+      new Map(
+        bonusCells.map((cell) => [`${cell.row}-${cell.col}`, cell.multiplier]),
+      ),
+    [bonusCells],
+  );
 
   // Compute cell pixel size based on grid to fit viewport
   const cellSize = useMemo(() => {
@@ -93,21 +102,35 @@ export default function Grid() {
 
   return (
     <div className="flex flex-col items-center gap-3 w-full">
-      {/* Grid — scrollable wrapper for large grids on small screens */}
+      <div className="flex w-full items-center justify-between gap-3 rounded-3xl border border-gray-200/80 bg-white/70 px-4 py-3 text-xs text-slate-500 shadow-[0_18px_42px_-30px_rgba(15,23,42,0.9)] dark:border-white/10 dark:bg-slate-950/45 dark:text-white/45">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-2.5 w-2.5 rounded-full bg-cyan-400" />
+          <span>Standard turn tile</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2 py-1 font-semibold text-cyan-300">
+            2x
+          </span>
+          <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-1 font-semibold text-amber-300">
+            3x
+          </span>
+        </div>
+      </div>
+
       <div className="w-full overflow-auto touch-pan-x touch-pan-y">
         <div className="flex justify-center">
           <div
-            className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-glass backdrop-blur-sm"
+            className="relative rounded-[28px] overflow-hidden border border-gray-200/90 dark:border-white/10 backdrop-blur-sm shadow-[0_30px_80px_-42px_rgba(15,23,42,0.95)]"
             style={{
               display: "grid",
               gridTemplateColumns: `repeat(${gridSize}, ${cellSize}px)`,
               gridTemplateRows: `repeat(${gridSize}, ${cellSize}px)`,
-              gap: 1,
-              padding: 6,
+              gap: 2,
+              padding: 10,
               background:
                 theme === "dark"
-                  ? "rgba(255,255,255,0.03)"
-                  : "rgba(0,0,0,0.03)",
+                  ? "linear-gradient(180deg, rgba(15,23,42,0.88), rgba(2,6,23,0.95))"
+                  : "linear-gradient(180deg, rgba(248,250,252,0.98), rgba(226,232,240,0.9))",
             }}
           >
             {grid.map((row, r) =>
@@ -119,6 +142,7 @@ export default function Grid() {
                   col={c}
                   isMyTurn={isMyTurn}
                   isNewWord={flashCells.has(`${r}-${c}`)}
+                  bonusMultiplier={bonusLookup.get(`${r}-${c}`) ?? 1}
                   onClick={handleCellClick}
                   cellSize={cellSize}
                 />
@@ -138,11 +162,21 @@ export default function Grid() {
                 }}
               >
                 <div
-                  className="glass-card p-5 flex flex-col items-center gap-3 w-[min(220px,80vw)]"
+                  className="glass-card p-5 flex flex-col items-center gap-3 w-[min(260px,84vw)]"
                   onKeyDown={handleKeyDown}
                 >
-                  <span className="text-slate-500 dark:text-white/60 text-xs text-center">
-                    Cell ({pending.row},{pending.col}) — Enter letter:
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-500 dark:text-white/40 text-center">
+                    Selected Cell
+                  </span>
+                  <span className="text-sm text-slate-600 dark:text-white/70 text-center">
+                    {String.fromCharCode(65 + pending.col)}
+                    {pending.row + 1}
+                    {bonusLookup.get(`${pending.row}-${pending.col}`) > 1
+                      ? ` • ${bonusLookup.get(`${pending.row}-${pending.col}`)}x tile`
+                      : ""}
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-white/50 text-center">
+                    Enter a single letter to lock in your move.
                   </span>
                   <input
                     autoFocus
@@ -188,11 +222,13 @@ export default function Grid() {
       <div
         className={`text-sm font-medium px-4 py-1.5 rounded-full transition-all duration-300 ${
           isMyTurn
-            ? "bg-violet-500/20 text-violet-300 shadow-glow animate-pulse-glow"
+            ? "bg-cyan-400/15 text-cyan-300 shadow-glow animate-pulse-glow"
             : "bg-gray-100 text-slate-500 dark:bg-white/5 dark:text-white/40"
         }`}
       >
-        {isMyTurn ? "✦ Your turn — click a cell" : "Waiting for opponent…"}
+        {isMyTurn
+          ? "Your turn: claim a tile and place a letter."
+          : "Waiting for the active player to move."}
       </div>
     </div>
   );
