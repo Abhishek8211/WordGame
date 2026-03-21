@@ -69,12 +69,18 @@ export default function GamePage() {
   const bonusTileCount = useGameStore((s) => s.bonusCells.length);
 
   useEffect(() => {
+    setClockNow(Date.now());
+
+    if (!turnEndsAt) {
+      return undefined;
+    }
+
     const intervalId = window.setInterval(() => {
       setClockNow(Date.now());
-    }, 250);
+    }, 1000);
 
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [turnEndsAt]);
 
   useEffect(
     () => () => {
