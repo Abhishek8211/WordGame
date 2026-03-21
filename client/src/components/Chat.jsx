@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { memo, useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, X, MessageSquare } from "lucide-react";
 import useGameStore from "../store/useGameStore.js";
@@ -11,7 +11,7 @@ function formatTimestamp(timestamp) {
   });
 }
 
-export default function Chat() {
+const Chat = memo(function Chat() {
   const chatOpen = useGameStore((s) => s.chatOpen);
   const toggleChat = useGameStore((s) => s.toggleChat);
   const chat = useGameStore((s) => s.chat);
@@ -161,4 +161,6 @@ export default function Chat() {
       </AnimatePresence>
     </>
   );
-}
+});
+
+export default Chat;
