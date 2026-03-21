@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { memo, useState, useCallback, useMemo, useEffect } from "react";
 import GridCell from "./GridCell.jsx";
 import useGameStore from "../store/useGameStore.js";
 import { getSocket } from "../utils/socket.js";
@@ -7,7 +7,7 @@ import { getSocket } from "../utils/socket.js";
  * Renders the N×N grid. Cells are memoized.
  * Input overlay pops up when you click an empty cell.
  */
-export default function Grid() {
+const Grid = memo(function Grid() {
   const grid = useGameStore((s) => s.grid);
   const gridSize = useGameStore((s) => s.gridSize);
   const currentTurn = useGameStore((s) => s.currentTurn);
@@ -232,4 +232,6 @@ export default function Grid() {
       </div>
     </div>
   );
-}
+});
+
+export default Grid;
