@@ -1,9 +1,9 @@
-import React from "react";
+import React, { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Star } from "lucide-react";
 import useGameStore from "../store/useGameStore.js";
 
-export default function Scoreboard() {
+const Scoreboard = memo(function Scoreboard() {
   const scores = useGameStore((s) => s.scores);
   const players = useGameStore((s) => s.players);
   const currentTurn = useGameStore((s) => s.currentTurn);
@@ -112,4 +112,6 @@ export default function Scoreboard() {
       )}
     </div>
   );
-}
+});
+
+export default Scoreboard;
