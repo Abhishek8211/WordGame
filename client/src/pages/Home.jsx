@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   Grid3x3,
-  Hash,
   LogIn,
   Moon,
   Plus,
@@ -15,6 +14,21 @@ import {
 } from "lucide-react";
 import useGameStore from "../store/useGameStore.js";
 import { connectSocket } from "../utils/socket.js";
+
+const ROOM_CODE_LENGTH = 6;
+
+function normalizeRoomCode(value) {
+  const upperValue = value.toUpperCase();
+  const directMatch = upperValue.match(
+    new RegExp(`[A-Z0-9]{${ROOM_CODE_LENGTH}}`, "g"),
+  );
+
+  if (directMatch?.length) {
+    return directMatch[directMatch.length - 1];
+  }
+
+  return upperValue.replace(/[^A-Z0-9]/g, "").slice(0, ROOM_CODE_LENGTH);
+}
 
 export default function Home() {
   const navigate = useNavigate();
@@ -95,17 +109,24 @@ export default function Home() {
 
   const handleJoin = () => {
     const trimmedName = playerName.trim();
+    const normalizedJoinCode = normalizeRoomCode(joinCode);
 
     if (!trimmedName) {
       setError("Enter your name first.");
       return;
     }
-    if (!joinCode.trim()) {
+    if (!normalizedJoinCode) {
       setError("Enter the room code.");
       return;
     }
+    if (normalizedJoinCode.length !== ROOM_CODE_LENGTH) {
+      setError("Room codes are 6 characters.");
+      return;
+    }
+
     setLoading(true);
     setError("");
+    setJoinCode(normalizedJoinCode);
 
     resetAll();
     setPlayerName(trimmedName);
@@ -116,7 +137,7 @@ export default function Home() {
       socket.emit(
         "join_room",
         {
-          roomCode: joinCode.trim().toUpperCase(),
+          roomCode: normalizedJoinCode,
           playerName: trimmedName,
         },
         (res) => {
@@ -283,22 +304,30 @@ export default function Home() {
                   <label className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-500 dark:text-white/40">
                     Room Code
                   </label>
-                  <div className="relative">
-                    <Hash
-                      size={16}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/28"
-                    />
+                  <div className="space-y-2">
                     <input
-                      className="glass-input pl-11 font-mono text-lg uppercase tracking-[0.35em]"
+                      className="glass-input font-mono text-lg uppercase tracking-[0.28em] sm:text-xl"
                       placeholder="ABC123"
                       value={joinCode}
                       onChange={(e) => {
-                        setJoinCode(e.target.value.toUpperCase());
+                        setJoinCode(normalizeRoomCode(e.target.value));
+                        setError("");
+                      }}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        setJoinCode(
+                          normalizeRoomCode(e.clipboardData.getData("text")),
+                        );
                         setError("");
                       }}
                       onKeyDown={(e) => e.key === "Enter" && handleJoin()}
-                      maxLength={6}
+                      spellCheck={false}
+                      maxLength={ROOM_CODE_LENGTH}
                     />
+                    <p className="text-xs text-slate-500 dark:text-white/45">
+                      Paste the invite code directly. Only the 6-character room
+                      code is kept.
+                    </p>
                   </div>
                 </motion.div>
               )}
