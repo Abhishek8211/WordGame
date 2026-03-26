@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Space Grotesk", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       colors: {
@@ -20,8 +20,8 @@ export default {
         xs: "2px",
       },
       boxShadow: {
-        glow: "0 0 20px rgba(139,92,246,0.4)",
-        "glow-lg": "0 0 40px rgba(139,92,246,0.5)",
+        glow: "0 0 26px rgba(34,211,238,0.35)",
+        "glow-lg": "0 0 44px rgba(34,211,238,0.45)",
         glass: "0 8px 32px rgba(0,0,0,0.37)",
       },
       animation: {
@@ -40,8 +40,8 @@ export default {
           to: { transform: "translateX(0)" },
         },
         pulseGlow: {
-          "0%,100%": { boxShadow: "0 0 10px rgba(139,92,246,0.3)" },
-          "50%": { boxShadow: "0 0 30px rgba(139,92,246,0.7)" },
+          "0%,100%": { boxShadow: "0 0 10px rgba(34,211,238,0.28)" },
+          "50%": { boxShadow: "0 0 30px rgba(34,211,238,0.62)" },
         },
         bounceIn: {
           from: { transform: "scale(0.5)", opacity: 0 },
