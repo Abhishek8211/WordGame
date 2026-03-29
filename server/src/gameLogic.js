@@ -8,6 +8,71 @@ function initGrid(size) {
   return Array.from({ length: size }, () => Array(size).fill(""));
 }
 
+function shuffle(items) {
+  for (let index = items.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [items[index], items[swapIndex]] = [items[swapIndex], items[index]];
+  }
+  return items;
+}
+
+function generateBonusCells(size) {
+  const totalBonusCells = Math.max(
+    4,
+    Math.min(size + 2, Math.floor(size * 0.75)),
+  );
+  const tripleCount = Math.max(1, Math.floor(totalBonusCells / 4));
+  const positions = [];
+  const occupied = new Set();
+
+  while (positions.length < totalBonusCells) {
+    const row = Math.floor(Math.random() * size);
+    const col = Math.floor(Math.random() * size);
+    const key = `${row}-${col}`;
+
+    if (occupied.has(key)) {
+      continue;
+    }
+
+    occupied.add(key);
+    positions.push({ row, col });
+  }
+
+  return shuffle(positions).map((cell, index) => ({
+    ...cell,
+    multiplier: index < tripleCount ? 3 : 2,
+  }));
+}
+
+function getCellMultiplier(bonusCells, row, col) {
+  const matchedCell = bonusCells.find(
+    (cell) => cell.row === row && cell.col === col,
+  );
+
+  return matchedCell?.multiplier ?? 1;
+}
+
+function isGridFull(grid) {
+  return grid.every((row) => row.every((cell) => cell !== ""));
+}
+
+function createInitialStats(size) {
+  return {
+    totalCells: size * size,
+    filledCells: 0,
+    totalMoves: 0,
+    totalWords: 0,
+    bestWord: null,
+  };
+}
+
+function getStatsSnapshot(stats) {
+  return {
+    ...stats,
+    remainingCells: Math.max(stats.totalCells - stats.filledCells, 0),
+  };
+}
+
 /**
  * After placing a letter at (row, col), scan all 8 directions for words ≥ 3 chars.
  * Returns array of { word, cells: [{r,c}] }
@@ -93,4 +158,12 @@ function extractWordsFromLine(line) {
   return words;
 }
 
-module.exports = { initGrid, checkWordsFormed, placeLetter: () => {} };
+module.exports = {
+  initGrid,
+  generateBonusCells,
+  getCellMultiplier,
+  isGridFull,
+  createInitialStats,
+  getStatsSnapshot,
+  checkWordsFormed,
+};
